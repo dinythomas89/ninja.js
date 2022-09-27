@@ -6,7 +6,7 @@ const Search = ({ handleSearchInput }) => {
       <input
         className="form-control"
         type="search"
-        onChange={(e) => handleSearchInput(e)}
+        onChange={handleSearchInput}
         placeholder="Søg brugere"
       />
     </div>

@@ -11,22 +11,22 @@ const DataTable = ({ usersData, rowsPerPage }) => {
 
   const numberOfPages = Math.ceil(usersData.length / rowsPerPage);
 
+  //search event hander
   const handleSearchInput = (e) => {
     const query = e.target.value;
-    console.log(query);
-    if (query === '') setPagination(true);
+    if (!query) setPagination(true);
     setPagination(false);
+
     const filteredData = usersData.filter((userData) => {
       return (
         userData.name1.toLowerCase().search(query.toLowerCase()) > -1 ||
         userData.email.toLowerCase().search(query.toLowerCase()) > -1
       );
     });
-    setUsers(filteredData);
-    //setCurrentPage(1);
+    if (filteredData) setUsers(filteredData);
   };
 
-  //Get users in a page
+  //Get users in current page
   const indexOfLastRecord = currentPage * rowsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
   const currentData = usersData.slice(indexOfFirstRecord, indexOfLastRecord);
@@ -35,16 +35,23 @@ const DataTable = ({ usersData, rowsPerPage }) => {
     setUsers(currentData);
   }, [currentPage]);
 
+  const noUserDataError='There is no user to display!..'
+
   return (
     <div>
       <Search handleSearchInput={handleSearchInput} />
-      <table>
-        <tbody>
-          {users.map((userData) => (
-            <Row key={userData.per_id} userData={userData} />
-          ))}
-        </tbody>
-      </table>
+      {users.length > 0 ? (
+        <table>
+          <tbody>
+            {users.map((userData) => (
+              <Row key={userData.per_id} userData={userData} />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div>{noUserDataError}</div>
+      )}
+
       {pagination ? (
         <Pagination
           numberOfPages={numberOfPages}
