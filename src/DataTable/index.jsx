@@ -9,7 +9,7 @@ const DataTable = ({ usersData, rowsPerPage }) => {
   const [users, setUsers] = useState(usersData);
   const [pagination, setPagination] = useState(true);
 
-  const numberOfPages = Math.ceil(usersData.length / rowsPerPage);
+  const numberOfPages = () => Math.ceil(usersData.length / rowsPerPage);
 
   //search event hander
   const handleSearchInput = (e) => {
@@ -27,15 +27,18 @@ const DataTable = ({ usersData, rowsPerPage }) => {
   };
 
   //Get users in current page
-  const indexOfLastRecord = currentPage * rowsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
-  const currentData = usersData.slice(indexOfFirstRecord, indexOfLastRecord);
+  const getCurrentPageData = () => {
+    const indexOfLastRecord = currentPage * rowsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
+    const currentData = usersData.slice(indexOfFirstRecord, indexOfLastRecord);
+    setUsers(currentData);
+  };
 
   useEffect(() => {
-    setUsers(currentData);
-  }, [currentPage]);
+    getCurrentPageData();
+  }, [currentPage,rowsPerPage]);
 
-  const noUserDataError='There is no user to display!..'
+  const noUserDataError = 'There is no user to display!..';
 
   return (
     <div>
@@ -54,7 +57,7 @@ const DataTable = ({ usersData, rowsPerPage }) => {
 
       {pagination ? (
         <Pagination
-          numberOfPages={numberOfPages}
+          numberOfPages={numberOfPages()}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
