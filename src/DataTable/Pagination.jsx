@@ -1,27 +1,22 @@
-import React from 'react'
+import React from 'react';
 
-import Page from './Page'
+import Page from './Page';
 
-const Pagination = ({ currentPageNumber, totalNumberOfPages, onChange }) => {
-  const pages =
-    Array
-      .from(Array(totalNumberOfPages).keys())
-      .map(pageNumber => {
-        return <Page
-          key={pageNumber}
-          currentPageNumber={currentPageNumber}
-          pageNumber={pageNumber}
-          onChange={onChange} />
-      })
+const Pagination = ({ numberOfPages, currentPage, setCurrentPage }) => {
+  const pageNumbers = [...Array(numberOfPages + 1).keys()].slice(1);
 
-  if (pages.length <= 1) {
-    return null
-  }
-  return(
+  return (
     <ul className="pagination">
-      {pages}
+      {pageNumbers.map((pageNumber) => (
+        <Page
+          key={pageNumber}
+          pageNumber={pageNumber}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      ))}
     </ul>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;

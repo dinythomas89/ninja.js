@@ -1,76 +1,53 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 
-import Pagination from './Pagination'
-import Row from './Row'
-import Search from './Search'
+import Row from './Row';
+import Search from './Search';
+import Pagination from './Pagination';
 
-class DataTable extends React.Component {
-  state = {
-    rows: this.props.rows,
-    currentPageNumber: 0,
-    totalNumberOfPages: this.calculateTotalNumberOfPages(this.props.rows)
-  }
+const DataTable = ({ usersData, rowsPerPage }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState(usersData);
 
-  static defaultProps = {
-    rowsPerPage: 40
-  }
+  const numberOfPages = Math.ceil(usersData.length / rowsPerPage);
 
-  calculateTotalNumberOfPages(rows) {
-    const { rowsPerPage } = this.props
-    if (rowsPerPage == 0) return 0
-    return Math.ceil(rows.length / rowsPerPage)
-  }
+  const handleSearchInput = (e) => {
+    const text = e.target.value;
+    const filteredData = usersData.filter((userData) => {
+      return (
+        userData.name1.toLowerCase().search(text.toLowerCase()) > -1 ||
+        userData.email.toLowerCase().search(text.toLowerCase()) > -1
+      );
+    });
+    setUsers(filteredData);
+    setCurrentPage(1);
+  };
 
-  search(event) {
-    const { rows } = this.props
-    const text = event.target.value
-    let rowsFound = rows
+  //Get users in a page
+  const indexOfLastRecord = currentPage * rowsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
+  const currentData = usersData.slice(indexOfFirstRecord, indexOfLastRecord);
 
-    if (text) {
-      rowsFound = rows.filter((row) => {
-        return row.name1.toLowerCase().search(text.toLowerCase()) > -1 ||
-         (row.email && row.email.toLowerCase().search(text.toLowerCase()) > -1)
-      })
-    }
+  useEffect(() => {
+    setUsers(currentData);
+  }, [currentPage]);
 
-    this.setState({
-      rows: rowsFound,
-      currentPageNumber: 0,
-      totalNumberOfPages: this.calculateTotalNumberOfPages(rowsFound)
-    })
-  }
+  return (
+    <div>
+      <Search handleSearchInput={handleSearchInput} />
+      <table>
+        <tbody>
+          {users.map((userData) => (
+            <Row key={userData.per_id} userData={userData} />
+          ))}
+        </tbody>
+      </table>
+      <Pagination
+        numberOfPages={numberOfPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
+    </div>
+  );
+};
 
-  changeToPageNumber(pageNumber) {
-    this.setState({ currentPageNumber: pageNumber })
-  }
-
-  rowsInPageNumber(pageNumber) {
-    const { rowsPerPage } = this.props
-    const startIndex = pageNumber * rowsPerPage
-    return [startIndex, startIndex + rowsPerPage]
-  }
-
-  render() {
-    const { rows, currentPageNumber, totalNumberOfPages } = this.state
-    const rowsToRender = rows
-      .map(row => <Row key={row.per_id} row={row} />)
-      .slice(...this.rowsInPageNumber(currentPageNumber))
-
-    return(
-      <div>
-        <Search onSearch={this.search.bind(this)} />
-        <table>
-          <tbody>
-            { rowsToRender }
-          </tbody>
-        </table>
-        <Pagination
-          currentPageNumber={currentPageNumber}
-          totalNumberOfPages={totalNumberOfPages}
-          onChange={this.changeToPageNumber.bind(this)} />
-      </div>
-    )
-  }
-}
-
-export default DataTable
+export default DataTable;
