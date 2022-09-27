@@ -7,19 +7,23 @@ import Pagination from './Pagination';
 const DataTable = ({ usersData, rowsPerPage }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState(usersData);
+  const [pagination, setPagination] = useState(true);
 
   const numberOfPages = Math.ceil(usersData.length / rowsPerPage);
 
   const handleSearchInput = (e) => {
-    const text = e.target.value;
+    const query = e.target.value;
+    console.log(query);
+    if (query === '') setPagination(true);
+    setPagination(false);
     const filteredData = usersData.filter((userData) => {
       return (
-        userData.name1.toLowerCase().search(text.toLowerCase()) > -1 ||
-        userData.email.toLowerCase().search(text.toLowerCase()) > -1
+        userData.name1.toLowerCase().search(query.toLowerCase()) > -1 ||
+        userData.email.toLowerCase().search(query.toLowerCase()) > -1
       );
     });
     setUsers(filteredData);
-    setCurrentPage(1);
+    //setCurrentPage(1);
   };
 
   //Get users in a page
@@ -41,11 +45,15 @@ const DataTable = ({ usersData, rowsPerPage }) => {
           ))}
         </tbody>
       </table>
-      <Pagination
-        numberOfPages={numberOfPages}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      {pagination ? (
+        <Pagination
+          numberOfPages={numberOfPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      ) : (
+        ''
+      )}
     </div>
   );
 };
