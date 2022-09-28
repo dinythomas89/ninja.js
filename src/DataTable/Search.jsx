@@ -1,13 +1,13 @@
 import React from 'react';
 
-const Search = ({ handleSearchInput }) => {
+const Search = ({ locale, handleSearchInput }) => {
   return (
     <div>
       <input
         className="form-control"
         type="search"
         onChange={handleSearchInput}
-        placeholder="Søg brugere"
+        placeholder={locale === 'da' ? 'Søg brugere' : 'Search user'}
       />
     </div>
   );

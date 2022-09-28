@@ -4,7 +4,7 @@ import Row from './Row';
 import Search from './Search';
 import Pagination from './Pagination';
 
-const DataTable = ({ usersData, rowsPerPage }) => {
+const DataTable = ({ usersData, locale, rowsPerPage }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState(usersData);
   const [pagination, setPagination] = useState(true);
@@ -36,13 +36,13 @@ const DataTable = ({ usersData, rowsPerPage }) => {
 
   useEffect(() => {
     getCurrentPageData();
-  }, [currentPage,rowsPerPage]);
+  }, [currentPage, rowsPerPage]);
 
   const noUserDataError = 'There is no user to display!..';
 
   return (
     <div>
-      <Search handleSearchInput={handleSearchInput} />
+      <Search locale={locale} handleSearchInput={handleSearchInput} />
       {users.length > 0 ? (
         <table>
           <tbody>
